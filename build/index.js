@@ -103,6 +103,59 @@ const starFilled = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElem
 
 /***/ }),
 
+/***/ "./src/PrePublishDisplay.js":
+/*!**********************************!*\
+  !*** ./src/PrePublishDisplay.js ***!
+  \**********************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/star-empty.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/star-filled.js");
+/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+
+const PrePublishDisplay = _ref => {
+  let {
+    wordCount,
+    wordLock,
+    imgLock
+  } = _ref;
+  console.log(`wordLock: ${wordLock}`);
+  const wordIcon = wordLock ? _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"] : _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"];
+  const imgIcon = imgLock ? _wordpress_icons__WEBPACK_IMPORTED_MODULE_2__["default"] : _wordpress_icons__WEBPACK_IMPORTED_MODULE_3__["default"];
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelBody, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    icon: wordIcon
+  }), `WordCount: ${wordCount}`), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_4__["default"], {
+    icon: imgIcon
+  }), `Featured Image?`));
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (PrePublishDisplay);
+
+/***/ }),
+
+/***/ "./src/constants.js":
+/*!**************************!*\
+  !*** ./src/constants.js ***!
+  \**************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "REQUIRED_WORD_COUNT": function() { return /* binding */ REQUIRED_WORD_COUNT; }
+/* harmony export */ });
+const REQUIRED_WORD_COUNT = 10;
+
+
+/***/ }),
+
 /***/ "@wordpress/blocks":
 /*!********************************!*\
   !*** external ["wp","blocks"] ***!
@@ -270,11 +323,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_wordcount__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/wordcount */ "@wordpress/wordcount");
 /* harmony import */ var _wordpress_wordcount__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_wordcount__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/star-filled.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/library/star-empty.js");
-/* harmony import */ var _wordpress_icons__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/icons */ "./node_modules/@wordpress/icons/build-module/icon/index.js");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _PrePublishDisplay__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./PrePublishDisplay */ "./src/PrePublishDisplay.js");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./constants */ "./src/constants.js");
 
 
 
@@ -320,8 +370,8 @@ const render = () => {
 
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     let lockPost = false;
-    setWordReady(_wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"]);
-    setImgReady(_wordpress_icons__WEBPACK_IMPORTED_MODULE_7__["default"]);
+    setWordReady(true);
+    setImgReady(true);
     console.log('blocks', blocks); // Filter out P blocks
 
     let countable = blocks.filter(block => block.name === 'core/paragraph'); // Count words in paragraph blocks
@@ -329,16 +379,16 @@ const render = () => {
     const wordCount = (0,_wordpress_wordcount__WEBPACK_IMPORTED_MODULE_5__.count)((0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_4__.serialize)(countable), 'words'); // Set state with wordCount
 
     setWordCountDisplay(wordCount);
-    console.log(`wordCount ${wordCount}`); // lock if fewer than 10 words
+    console.log(`required wordCount ${_constants__WEBPACK_IMPORTED_MODULE_7__.REQUIRED_WORD_COUNT}`); // lock if fewer than 10 words
 
-    if (wordCount < 10) {
+    if (wordCount < _constants__WEBPACK_IMPORTED_MODULE_7__.REQUIRED_WORD_COUNT) {
       lockPost = true;
-      setWordReady(_wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"]);
+      setWordReady(false);
     }
 
     if (!featuredImageID) {
       lockPost = true;
-      setImgReady(_wordpress_icons__WEBPACK_IMPORTED_MODULE_8__["default"]);
+      setImgReady(false);
     }
 
     if (lockPost) {
@@ -353,11 +403,11 @@ const render = () => {
     name: "prepublish-checklist",
     title: "PREPublish Checklist",
     className: "prepublish-checklist"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelBody, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    icon: wordReady
-  }), `WordCount: ${wordCountDisplay}`), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_icons__WEBPACK_IMPORTED_MODULE_9__["default"], {
-    icon: imgReady
-  }), `Featured Image?`))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__.PluginPrePublishPanel, null, "Word Count: ", wordCountDisplay));
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_PrePublishDisplay__WEBPACK_IMPORTED_MODULE_6__["default"], {
+    wordCount: wordCountDisplay,
+    wordLock: !wordReady,
+    imgLock: !imgReady
+  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__.PluginPrePublishPanel, null, "Word Count: ", wordCountDisplay));
 }; // register plugin
 
 
