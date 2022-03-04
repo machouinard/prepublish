@@ -175,12 +175,21 @@ const render = () => {
   } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useDispatch)('core/editor'); // Gets all blocks in post
 
   const {
-    blocks
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useSelect)(select => ({
-    blocks: select('core/editor').getBlocks()
-  })); // Runs everytime `blocks` updates
+    blocks,
+    cats,
+    tags,
+    featuredImageID
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_3__.useSelect)(select => {
+    return {
+      blocks: select('core/block-editor').getBlocks(),
+      cats: select('core/editor').getEditedPostAttribute('categories'),
+      tags: select('core/editor').getEditedPostAttribute('tags'),
+      featuredImageID: select('core/editor').getEditedPostAttribute('featured_media')
+    };
+  }); // Runs everytime `blocks` updates
 
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    let lockPost = false;
     console.log('blocks', blocks); // Filter out P blocks
 
     let countable = blocks.filter(block => block.name === 'core/paragraph'); // Count words in paragraph blocks
@@ -190,7 +199,13 @@ const render = () => {
     setWordCountDisplay(wordCount);
     console.log(`wordCount ${wordCount}`); // lock if fewer than 10 words
 
-    let lockPost = wordCount < 10;
+    if (wordCount < 10) {
+      lockPost = true;
+    }
+
+    if (!featuredImageID) {
+      lockPost = true;
+    }
 
     if (lockPost) {
       lockPostSaving();
@@ -199,7 +214,7 @@ const render = () => {
       unlockPostSaving();
       enablePublishSidebar();
     }
-  }, [blocks]);
+  }, [blocks, featuredImageID]);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_edit_post__WEBPACK_IMPORTED_MODULE_1__.PluginDocumentSettingPanel, {
     name: "prepublish-checklist",
     title: "PREPublish Checklist",

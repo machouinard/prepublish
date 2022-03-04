@@ -28,14 +28,19 @@ const render = () => {
 	      } = useDispatch( 'core/editor' );
 
 	// Gets all blocks in post
-	const { blocks } = useSelect( select => (
-		{
-			blocks: select( 'core/editor' ).getBlocks(),
-		}
-	) );
+	const { blocks, cats, tags, featuredImageID } = useSelect( ( select ) => {
+		return {
+			blocks: select( 'core/block-editor' ).getBlocks(),
+			cats: select( 'core/editor' ).getEditedPostAttribute( 'categories' ),
+			tags: select( 'core/editor' ).getEditedPostAttribute( 'tags' ),
+			featuredImageID:
+				select( 'core/editor' ).getEditedPostAttribute( 'featured_media' ),
+		};
+	} );
 
 	// Runs everytime `blocks` updates
 	useEffect( () => {
+		let lockPost = false;
 		console.log( 'blocks', blocks );
 		// Filter out P blocks
 		let countable = blocks.filter( block => block.name === 'core/paragraph' );
@@ -45,7 +50,12 @@ const render = () => {
 		setWordCountDisplay( wordCount );
 		console.log( `wordCount ${ wordCount }` );
 		// lock if fewer than 10 words
-		let lockPost = wordCount < 10;
+		if ( wordCount < 10 ) {
+			lockPost = true;
+		}
+		if ( ! featuredImageID ) {
+			lockPost = true;
+		}
 
 		if ( lockPost ) {
 			lockPostSaving();
@@ -54,7 +64,7 @@ const render = () => {
 			unlockPostSaving();
 			enablePublishSidebar();
 		}
-	}, [ blocks ] );
+	}, [ blocks, featuredImageID ] );
 
 	return (
 		<>
