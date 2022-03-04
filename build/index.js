@@ -224,6 +224,7 @@ const render = () => {
 
 
 (0,_wordpress_plugins__WEBPACK_IMPORTED_MODULE_2__.registerPlugin)('prepublish', {
+  icon: 'forms',
   render
 });
 }();

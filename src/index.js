@@ -84,5 +84,6 @@ const render = () => {
 
 // register plugin
 registerPlugin( 'prepublish', {
+	icon: 'forms',
 	render,
 } );
