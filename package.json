@@ -23,5 +23,8 @@
   "license": "ISC",
   "devDependencies": {
     "@wordpress/scripts": "^22.1.0"
+  },
+  "dependencies": {
+    "@wordpress/icons": "^7.0.1"
   }
 }
