@@ -8,8 +8,13 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useEffect, useState } from '@wordpress/element';
 import { serialize } from '@wordpress/blocks';
 import { count } from '@wordpress/wordcount';
-import { Icon, check, starEmpty, starFilled } from '@wordpress/icons';
-import { Panel, PanelBody, PanelRow } from '@wordpress/components';
+import { PanelBody } from '@wordpress/components';
+import WordStatus from './components/WordStatus';
+import ImageStatus from './components/ImageStatus';
+import CategoryStatus from './components/categoryStatus';
+import { REQUIRED_WORD_COUNT } from './constants';
+import { stack, starFilled } from '@wordpress/icons';
+//import './index.scss';
 
 /**
  * Render function for the plugin
@@ -18,10 +23,18 @@ import { Panel, PanelBody, PanelRow } from '@wordpress/components';
  */
 const render = () => {
 
+	const postType = useSelect(
+		select => select( 'core/editor' ).getCurrentPostType() );
+
+	if ( 'post' !== postType ) {
+		return null;
+	}
+
 	// var and func for keeping state
 	const [ wordCountDisplay, setWordCountDisplay ] = useState( '' );
 	const [ wordReady, setWordReady ] = useState( '' );
 	const [ imgReady, setImgReady ] = useState( '' );
+	const [ categories, setCategories ] = useState( '' );
 
 	// funcs to handle locking post
 	const {
@@ -45,24 +58,27 @@ const render = () => {
 	// Runs everytime `blocks` updates
 	useEffect( () => {
 		let lockPost = false;
-		setWordReady( starFilled );
-		setImgReady( starFilled );
-		console.log( 'blocks', blocks );
+		setWordReady( true );
+		setImgReady( true );
+		setCategories( cats );
 		// Filter out P blocks
 		let countable = blocks.filter( block => block.name === 'core/paragraph' );
 		// Count words in paragraph blocks
 		const wordCount = count( serialize( countable ), 'words' );
 		// Set state with wordCount
 		setWordCountDisplay( wordCount );
-		console.log( `wordCount ${ wordCount }` );
 		// lock if fewer than 10 words
-		if ( wordCount < 10 ) {
+		if ( wordCount < REQUIRED_WORD_COUNT ) {
 			lockPost = true;
-			setWordReady( starEmpty );
+			setWordReady( false );
 		}
 		if ( ! featuredImageID ) {
 			lockPost = true;
-			setImgReady( starEmpty );
+			setImgReady( false );
+		}
+		// lock if no categories or inlcudes uncategorized
+		if ( ! cats.length || cats.includes( 1 ) ) {
+			lockPost = true;
 		}
 
 		if ( lockPost ) {
@@ -72,28 +88,41 @@ const render = () => {
 			unlockPostSaving();
 			enablePublishSidebar();
 		}
-	}, [ blocks, featuredImageID ] );
+	}, [ blocks, featuredImageID, cats ] );
 
 	return (
 		<>
 			<PluginDocumentSettingPanel
 				name="prepublish-checklist"
-				title="PREPublish Checklist"
+				title="Pre-Publish Checklist"
 				className="prepublish-checklist"
 			>
 				<PanelBody>
-					<PanelRow>
-						<Icon icon={ wordReady }/>
-						{ `WordCount: ${ wordCountDisplay }` }
-					</PanelRow>
-					<PanelRow>
-						<Icon icon={ imgReady }/>
-						{ `Featured Image?` }
-					</PanelRow>
+					<WordStatus
+						wordCount={ wordCountDisplay }
+						wordLock={ ! wordReady }
+					/>
+					<ImageStatus
+						imgLock={ ! imgReady }
+					/>
+					<CategoryStatus
+						cats={ categories }
+					/>
 				</PanelBody>
 			</PluginDocumentSettingPanel>
 			<PluginPrePublishPanel>
-				Word Count: { wordCountDisplay }
+				<PanelBody>
+					<WordStatus
+						wordCount={ wordCountDisplay }
+						wordLock={ ! wordReady }
+					/>
+					<ImageStatus
+						imgLock={ ! imgReady }
+					/>
+					<CategoryStatus
+						cats={ categories }
+					/>
+				</PanelBody>
 			</PluginPrePublishPanel>
 		</>
 	);
@@ -101,6 +130,6 @@ const render = () => {
 
 // register plugin
 registerPlugin( 'prepublish', {
-	icon: 'forms',
+	icon: stack,
 	render,
 } );

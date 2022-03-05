@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array('wp-blocks', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-element', 'wp-plugins', 'wp-primitives', 'wp-wordcount'), 'version' => '705612030ef7c2c17d72fd88bf22d73e');
+<?php return array('dependencies' => array('wp-blocks', 'wp-components', 'wp-data', 'wp-edit-post', 'wp-element', 'wp-plugins', 'wp-primitives', 'wp-wordcount'), 'version' => '4ea4cfcb9ba17c01d6d95b6288fc2924');
